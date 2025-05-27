@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok - Make Your Day</title>
+    <title>Log in to TikTok</title>
+    <link rel="icon" href="https://lf16-tiktok-web.ttcug.com/obj/tiktok-web-common-sg/web/public/favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for better TikTok resemblance */
+        /* Custom CSS to override/enhance Tailwind for TikTok specific styling */
         body {
-            font-family: 'Inter', sans-serif; /* Using Inter font as per instructions */
+            font-family: 'Inter', sans-serif;
             background-color: #f0f2f5; /* Light grey background */
             display: flex;
             justify-content: center;
@@ -17,84 +23,171 @@
             margin: 0;
             padding: 20px; /* Add some padding for smaller screens */
             box-sizing: border-box; /* Include padding in element's total width and height */
+            overflow-y: auto; /* Allow scrolling if content is taller than viewport */
         }
         .login-container {
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px; /* Max width similar to TikTok's login box */
+            max-width: 480px; /* Wider to match TikTok's main box */
             padding: 40px 30px; /* More generous padding */
             text-align: center;
             box-sizing: border-box;
         }
-        .tiktok-logo {
-            font-size: 2.5rem; /* Large font size for logo text */
-            font-weight: bold;
+        @media (min-width: 640px) { /* On larger screens, center the form elements */
+            .login-container {
+                padding: 40px 48px; /* TikTok uses wider padding on larger screens */
+            }
+        }
+
+        .tiktok-logo-placeholder {
+            font-size: 2.25rem; /* Larger font size for logo text */
+            font-weight: 700; /* Extra bold */
             color: #fe2c55; /* TikTok red */
-            margin-bottom: 20px;
+            margin-bottom: 24px; /* More space below logo */
             letter-spacing: -1px; /* Slightly tighter letter spacing */
+            line-height: 1; /* Ensure tight line height */
+            display: inline-block; /* For transform */
+            position: relative;
+            animation: bounceIn 0.5s ease-out; /* Simple entry animation */
         }
-        .tiktok-logo span {
-            color: #222; /* Black for the 'Tok' part */
+        .tiktok-logo-placeholder span {
+            color: #1a1a1a; /* Darker black for 'Tok' part */
         }
+
+        /* Keyframe for a subtle bounce-in animation */
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80%, 100% {
+                transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+            0% {
+                opacity: 0;
+                transform: scale3d(.3, .3, .3);
+            }
+            20% {
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+            40% {
+                transform: scale3d(.9, .9, .9);
+            }
+            60% {
+                opacity: 1;
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+            80% {
+                transform: scale3d(.97, .97, .97);
+            }
+            100% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1);
+            }
+        }
+
         h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 25px;
+            font-size: 1.75rem; /* Larger heading */
+            font-weight: 700; /* Bold */
+            color: #1a1a1a; /* Dark text */
+            margin-bottom: 10px; /* Less space below heading, more for description */
         }
+        .description-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 30px; /* Space below description */
+            line-height: 1.4;
+        }
+
+        .login-option-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease-in-out;
+            width: 100%;
+            box-sizing: border-box;
+            font-weight: 500;
+            margin-bottom: 12px; /* Space between option buttons */
+        }
+        .login-option-button:hover {
+            background-color: #f5f5f5;
+        }
+        .login-option-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
         input {
             border: 1px solid #e0e0e0; /* Lighter border for inputs */
             border-radius: 4px;
-            padding: 12px 15px;
+            padding: 13px 16px; /* Slightly more vertical padding */
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 16px; /* Consistent margin */
             font-size: 1rem;
+            color: #333;
             outline: none;
-            transition: border-color 0.2s ease-in-out;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-sizing: border-box; /* Crucial for consistent width */
         }
         input:focus {
-            border-color: #fe2c55; /* Highlight on focus */
+            border-color: #fe2c55; /* TikTok red on focus */
+            box-shadow: 0 0 0 1px #fe2c55; /* Subtle outline effect */
         }
-        button {
+        input::placeholder {
+            color: #999; /* Lighter placeholder text */
+        }
+
+        .forgot-password-link {
+            font-size: 0.875rem; /* Slightly smaller text */
+            color: #2b6cb0; /* A standard blue for links, similar to TikTok's */
+            text-decoration: none;
+            text-align: right; /* Align to the right */
+            display: block; /* Ensures it takes full width for text-align */
+            margin-top: -8px; /* Adjust margin to be closer to input */
+            margin-bottom: 24px; /* Space before button */
+            font-weight: 500; /* Medium weight */
+        }
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
             background-color: #fe2c55; /* TikTok red */
             color: white;
             font-weight: 600;
-            padding: 12px 20px;
+            padding: 13px 20px; /* Match input padding height */
             border-radius: 4px;
             width: 100%;
             border: none;
             cursor: pointer;
             font-size: 1rem;
             transition: background-color 0.2s ease-in-out;
+            margin-top: 0; /* Ensure no extra top margin */
         }
-        button:hover {
+        .login-button:hover {
             background-color: #e6284e; /* Slightly darker red on hover */
         }
-        .forgot-password, .signup-link {
-            font-size: 0.9rem;
-            color: #007bff; /* Standard link blue, or adjust to TikTok's link color if known */
-            text-decoration: none;
-            margin-top: 15px;
-            display: block;
-        }
-        .forgot-password:hover, .signup-link:hover {
-            text-decoration: underline;
-        }
+
         .divider {
-            margin: 25px 0;
+            margin: 30px 0; /* More space around divider */
             position: relative;
             text-align: center;
-            color: #999;
+            color: #a0a0a0; /* Lighter grey for 'OR' text */
             font-size: 0.85rem;
+            font-weight: 500;
         }
         .divider::before,
         .divider::after {
             content: '';
             position: absolute;
             top: 50%;
-            width: 40%;
+            width: calc(50% - 25px); /* Adjust width to fit 'OR' text */
             height: 1px;
             background-color: #e0e0e0;
         }
@@ -104,74 +197,70 @@
         .divider::after {
             right: 0;
         }
-        .social-login-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
+
+        .signup-text {
+            margin-top: 32px; /* More space before signup text */
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 400;
         }
-        .social-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            color: #333;
+        .signup-link {
+            color: #2b6cb0; /* Link blue */
             text-decoration: none;
-            transition: background-color 0.2s ease-in-out;
+            font-weight: 600; /* Bold signup link */
         }
-        .social-button:hover {
-            background-color: #f8f8f8;
-        }
-        .social-button img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-            h2 {
-                font-size: 1.3rem;
-            }
-            .tiktok-logo {
-                font-size: 2rem;
-            }
+        .signup-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="tiktok-logo">Tik<span>Tok</span></div>
+        <div class="tiktok-logo-placeholder">Tik<span>Tok</span></div>
 
         <h2>Log in to TikTok</h2>
+        <p class="description-text">Manage your account, check notifications, comment on videos, and more.</p>
 
-        <form action="/login" method="post">
-            <input type="text" name="username" placeholder="Phone, email or username" required>
+        <div class="login-options-section">
+            <a href="#" class="login-option-button">
+                <img src="https://img.icons8.com/ios-filled/20/000000/tiktok--v1.png" alt="TikTok app icon">
+                Use TikTok app
+            </a>
+            <a href="#" class="login-option-button active-option">
+                <img src="https://img.icons8.com/ios-filled/20/000000/mail.png" alt="Email icon">
+                Use phone / email / username
+            </a>
+        </div>
+
+        <form action="/login" method="post" class="mt-6"> <input type="text" name="username" placeholder="Phone, email or username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <a href="#" class="forgot-password">Forgot password?</a>
-            <button type="submit">Log in</button>
+            <a href="#" class="forgot-password-link">Forgot password?</a>
+            <button type="submit" class="login-button">Log in</button>
         </form>
 
         <div class="divider">OR</div>
 
         <div class="social-login-options">
             <a href="#" class="social-button">
-                <img src="https://placehold.co/20x20/ffffff/000000?text=F" alt="Facebook">
+                <img src="https://img.icons8.com/ios-filled/20/000000/facebook-new.png" alt="Facebook icon">
                 Continue with Facebook
             </a>
             <a href="#" class="social-button">
-                <img src="https://placehold.co/20x20/ffffff/000000?text=G" alt="Google">
+                <img src="https://img.icons8.com/ios-filled/20/000000/google-logo.png" alt="Google icon">
                 Continue with Google
+            </a>
+            <a href="#" class="social-button">
+                <img src="https://img.icons8.com/ios-filled/20/000000/mac-os.png" alt="Apple icon">
+                Continue with Apple
+            </a>
+            <a href="#" class="social-button">
+                <img src="https://img.icons8.com/ios-filled/20/000000/twitter.png" alt="Twitter icon">
+                Continue with Twitter
             </a>
             </div>
 
-        <div class="mt-8 text-sm text-gray-600">
-            Don't have an account? <a href="#" class="text-blue-500 hover:underline signup-link">Sign up</a>
+        <div class="signup-text">
+            Don't have an account? <a href="#" class="signup-link">Sign up</a>
         </div>
     </div>
 </body>
